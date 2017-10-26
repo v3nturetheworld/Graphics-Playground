@@ -7,9 +7,7 @@ int main()
     std::cout << "Hello world from main\n";
 
 
-    TestStruct t("foo");
-    
 
-    GLDummyClass ctx;
-    ctx.gl_init_window();
+    GLTutorialClass ctx;
+    ctx.gl_init_window("Hello World Window");
 }

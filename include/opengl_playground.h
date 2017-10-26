@@ -5,25 +5,19 @@
 #include <GLFW/glfw3.h>
 
 
-struct TestStruct
-{
-    std::string msg;
-    TestStruct(const std::string _msg) : msg(_msg)
-    {
-        std::cout << "TestStruct constructed with message: " << msg << std::endl;
-    }
-};
-
-
-class GLDummyClass
+class GLTutorialClass
 {
 public:
-    GLDummyClass();
-    ~GLDummyClass();
+    GLTutorialClass();
+    ~GLTutorialClass();
     void gl_dummy_func();
-    void gl_init_window();
+    void gl_init_window(const std::string name, int width = 800, int height = 600);
+    
+    int start_event_loop();
+
 private:
     int ret_code;
+    GLFWwindow *window;
 };
 
 

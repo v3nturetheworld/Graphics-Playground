@@ -4,32 +4,37 @@ project(OpenGL_Playground)
 
 # VIM YouCompleteMe setup
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-IF( EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json" )
+if( EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json" )
   EXECUTE_PROCESS( COMMAND ${CMAKE_COMMAND} -E copy_if_different
     ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json
     ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json
   )
-ENDIF()
+endif()
 # END VIM SETUP
 
-option(test "Build all tests" off)
 
-set(library_SOURCES src/opengl_playground.cpp)
-set(CMAKE_CXX_FLAGS "-g -Wall") #-lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi")
+set(library_SOURCES src/opengl_playground.cpp src/glad.c)
+set(CMAKE_CXX_FLAGS "-std=c++17 -g -Wall")
 
 
 find_package(OpenGL REQUIRED)
+
 if(OPENGL_FOUND)
     message("Library for OpenGL Found on system.")
     add_library(Playgroundlib SHARED ${library_SOURCES})
-    target_include_directories(Playgroundlib  PUBLIC ${PROJECT_SOURCE_DIR}/include)
+    target_include_directories(Playgroundlib  PUBLIC 
+        ${PROJECT_SOURCE_DIR}/include 
+        ${PROJECT_SOURCE_DIR}/include/glad/
+        ${PROJECT_SOURCE_DIR}/include/KHR/
+    )
     include_directories(${OPENGL_INCLUDE_DIR})
     set(GL_DEPS GL X11 pthread Xrandr Xi)
 
     target_link_libraries(Playgroundlib glfw ${GL_DEPS} ${OPENGL_gl_LIBRARY})
     add_executable(Playground src/main.cpp)
-    target_link_libraries(Playground Playgroundlib) # ${OPENGL_gl_LIBRARY} ${GL_DEPS} ${glfw})
+    target_link_libraries(Playground Playgroundlib)     
     set(BUILT_EXECUTABLE TRUE)
+
 elseif(NOT ${OPENGL_FOUND})
     # TODO: Try looking in lib for glfw
     # NOTE: I'm pretty sure this will actually never get reached.
@@ -37,6 +42,7 @@ elseif(NOT ${OPENGL_FOUND})
 endif()
 
 
+option(test "Build all tests" OFF)
 if(test AND ${BUILT_EXECUTABLE})
     find_package(GTest)
     if(GTEST_FOUND)
